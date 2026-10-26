@@ -1,0 +1,500 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interlúdio | Estúdio Musical</title>
+<style>
+:root {
+  --bg:#171914; --panel:#20231e; --panel2:#292d26;
+  --text:#eeeade; --muted:#a4a698; --accent:#b7ca9e;
+  --border:#393d33; --red:#d59b91;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.55 system-ui,-apple-system,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:225px;padding:28px 16px;border-right:1px solid var(--border);
+  flex-shrink:0}
+.brand{padding:0 12px 28px}
+.brand strong{font-size:21px;letter-spacing:1px}
+.brand small{display:block;color:var(--muted);margin-top:4px}
+.nav{display:grid;gap:7px}
+.nav button{border:0;background:transparent;color:var(--muted);
+  text-align:left;padding:12px;border-radius:9px}
+.nav button.active,.nav button:hover{background:var(--panel2);color:var(--accent)}
+.sidebar-note{margin:32px 10px;color:var(--muted);font-size:12px}
+main{flex:1;min-width:0;padding:34px clamp(16px,4vw,52px);max-width:1500px}
+header{display:flex;justify-content:space-between;gap:15px;align-items:center;
+  flex-wrap:wrap;margin-bottom:28px}
+h1{font-size:clamp(25px,4vw,35px);line-height:1.2;margin:0 0 7px}
+h2{font-size:19px;margin:0 0 16px}
+h3{font-size:15px;margin:0 0 6px}
+p{margin:0 0 12px}
+.muted{color:var(--muted)}
+.eyebrow{color:var(--accent);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+.btn{background:var(--accent);color:#1c2118;border:1px solid var(--accent);
+  border-radius:8px;padding:9px 14px;font-weight:650}
+.btn.secondary{background:transparent;color:var(--text);border-color:var(--border)}
+.btn.danger{background:transparent;color:var(--red);border-color:var(--border)}
+.btn.small{padding:5px 9px;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:17px}
+.metric{font-size:27px;font-weight:700;margin:6px 0}
+.section{margin-top:27px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:17px}
+.stack{display:grid;gap:10px}
+.item{border:1px solid var(--border);border-radius:10px;padding:13px;background:var(--panel)}
+.item-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.item p{color:var(--muted);font-size:13px;margin:6px 0}
+.tag{display:inline-block;border:1px solid var(--border);border-radius:20px;
+  padding:3px 8px;font-size:11px;color:var(--accent);margin:4px 4px 0 0}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.board{display:grid;grid-template-columns:repeat(5,minmax(190px,1fr));gap:12px;
+  overflow-x:auto;padding-bottom:12px;align-items:start}
+.column{background:#1c1f1a;border:1px solid var(--border);border-radius:12px;
+  padding:11px;min-height:180px}
+.column-head{display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:12px;font-size:13px;font-weight:700}
+.column .item{margin-bottom:9px;padding:11px}
+.field{display:grid;gap:5px;margin-bottom:13px}
+.field label{font-size:13px;color:var(--muted)}
+input,select,textarea{width:100%;background:#171914;color:var(--text);
+  border:1px solid var(--border);border-radius:8px;padding:10px}
+textarea{resize:vertical;min-height:78px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.form-grid .full{grid-column:1/-1}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap}
+.empty{color:var(--muted);font-size:13px;padding:12px 4px}
+.habit-row{display:grid;grid-template-columns:minmax(120px,1fr) auto;gap:12px;
+  align-items:center;padding:13px 0;border-bottom:1px solid var(--border)}
+.week{display:grid;grid-template-columns:repeat(7,30px);gap:5px}
+.day{text-align:center;font-size:10px;color:var(--muted)}
+.day button{width:28px;height:28px;padding:0;border:1px solid var(--border);
+  border-radius:6px;background:#171914;color:var(--muted)}
+.day button.done{background:#78966a;color:white;border-color:#78966a}
+.day button.today{outline:1px solid var(--accent);outline-offset:2px}
+.progress{height:6px;background:var(--border);border-radius:8px;overflow:hidden;margin-top:8px}
+.progress span{display:block;height:100%;background:var(--accent)}
+.history-row{display:grid;grid-template-columns:1fr auto;gap:10px;
+  padding:11px 0;border-bottom:1px solid var(--border)}
+.notice{background:var(--panel2);border-radius:9px;padding:12px;color:var(--muted);
+  font-size:12px;margin-top:18px}
+footer{color:var(--muted);font-size:12px;margin-top:35px}
+[hidden]{display:none!important}
+@media(max-width:900px){
+  .sidebar{width:175px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .two-col{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .layout{display:block}.sidebar{width:100%;padding:14px;border-right:0;
+    border-bottom:1px solid var(--border)}
+  .brand{padding:0 5px 12px}
+  .nav{display:flex;overflow-x:auto}
+  .nav button{white-space:nowrap;padding:9px}
+  .sidebar-note{display:none}
+  main{padding:22px 14px}
+  .form-grid{grid-template-columns:1fr}
+  .form-grid .full{grid-column:auto}
+  .week{grid-template-columns:repeat(7,27px);gap:3px}
+  .day button{width:26px;height:27px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <strong>INTERLÚDIO.</strong>
+      <small>Teu estúdio musical</small>
+    </div>
+    <nav class="nav" aria-label="Navegação principal">
+      <button class="active" data-page="home">⌂ &nbsp; Visão geral</button>
+      <button data-page="tasks">▦ &nbsp; Kanban</button>
+      <button data-page="habits">◷ &nbsp; Hábitos</button>
+      <button data-page="sessions">♫ &nbsp; Sessões</button>
+      <button data-page="library">↗ &nbsp; Acervo</button>
+    </nav>
+    <div class="sidebar-note">A música se constrói um estudo de cada vez.</div>
+  </aside>
+
+  <main>
+    <header>
+      <div>
+        <div class="eyebrow" id="todayLabel">ESTÚDIO PESSOAL</div>
+        <h1 id="pageTitle">Visão geral</h1>
+        <p class="muted" id="pageSubtitle">Um lugar para planejar, praticar e perceber tua evolução.</p>
+      </div>
+      <button class="btn" id="quickSession">+ Registrar estudo</button>
+    </header>
+
+    <section id="page-home">
+      <div class="grid">
+        <div class="card"><div class="muted">Tarefas abertas</div><div class="metric" id="mTasks">0</div><div class="muted">Projetos em andamento</div></div>
+        <div class="card"><div class="muted">Hábitos de hoje</div><div class="metric" id="mHabits">0/0</div><div class="muted">Exercícios realizados</div></div>
+        <div class="card"><div class="muted">Estudo acumulado</div><div class="metric" id="mTime">0 min</div><div class="muted">Tempo registrado</div></div>
+        <div class="card"><div class="muted">Sessões registradas</div><div class="metric" id="mSessions">0</div><div class="muted">Práticas documentadas</div></div>
+      </div>
+      <div class="two-col section">
+        <div class="card">
+          <h2>Prioridades</h2>
+          <div id="homeTasks" class="stack"></div>
+          <div class="actions"><button class="btn secondary small" data-go="tasks">Abrir Kanban →</button></div>
+        </div>
+        <div class="card">
+          <h2>Rotina de hoje</h2>
+          <div id="homeHabits"></div>
+          <div class="actions"><button class="btn secondary small" data-go="habits">Ver hábitos →</button></div>
+        </div>
+      </div>
+      <div class="card section">
+        <h2>Estudos recentes</h2>
+        <div id="homeSessions"></div>
+        <div class="actions"><button class="btn secondary small" data-go="sessions">Ver histórico →</button></div>
+      </div>
+      <div class="notice">Dica: registra também o que foi difícil. Tempo estudado mostra consistência; tuas observações ajudam a entender o progresso.</div>
+    </section>
+
+    <section id="page-tasks" hidden>
+      <div class="card">
+        <h2 id="taskFormTitle">Nova tarefa</h2>
+        <form id="taskForm">
+          <input type="hidden" id="taskId">
+          <div class="form-grid">
+            <div class="field full"><label for="taskName">Nome da tarefa *</label><input id="taskName" required maxlength="120" placeholder="Ex.: Preparar a obra para apresentação"></div>
+            <div class="field"><label for="taskInstrument">Instrumento</label><select id="taskInstrument"><option>Violão</option><option>Guitarra</option><option>Contrabaixo</option><option>Teoria musical</option><option>Outro</option></select></div>
+            <div class="field"><label for="taskPriority">Prioridade</label><select id="taskPriority"><option>Normal</option><option>Alta</option><option>Baixa</option></select></div>
+            <div class="field"><label for="taskDue">Prazo</label><input type="date" id="taskDue"></div>
+            <div class="field"><label for="taskWork">Obra relacionada</label><input id="taskWork" maxlength="120" placeholder="Nome da música"></div>
+            <div class="field full"><label for="taskNotes">Detalhes / etapas</label><textarea id="taskNotes" placeholder="O que precisa ser feito?"></textarea></div>
+            <div class="field"><label for="taskStatus">Etapa</label><select id="taskStatus"><option value="inbox">Caixa de entrada</option><option value="todo">A fazer</option><option value="doing">Em andamento</option><option value="review">Em revisão</option><option value="done">Concluído</option></select></div>
+          </div>
+          <div class="form-actions"><button class="btn" type="submit">Salvar tarefa</button><button class="btn secondary" type="button" id="cancelTask" hidden>Cancelar edição</button></div>
+        </form>
+      </div>
+      <div class="section">
+        <div class="item-top" style="margin-bottom:13px"><h2>Quadro de tarefas</h2><span class="muted" id="taskCount"></span></div>
+        <div id="board" class="board"></div>
+      </div>
+    </section>
+
+    <section id="page-habits" hidden>
+      <div class="card">
+        <h2 id="habitFormTitle">Novo exercício recorrente</h2>
+        <form id="habitForm">
+          <input type="hidden" id="habitId">
+          <div class="form-grid">
+            <div class="field full"><label for="habitName">Exercício ou passagem *</label><input id="habitName" required maxlength="120" placeholder="Ex.: Arpejos, compasso 24 da obra..."></div>
+            <div class="field"><label for="habitInstrument">Instrumento</label><select id="habitInstrument"><option>Violão</option><option>Guitarra</option><option>Contrabaixo</option><option>Teoria musical</option><option>Outro</option></select></div>
+            <div class="field"><label for="habitGoal">Meta semanal (dias)</label><input id="habitGoal" type="number" min="1" max="7" value="5" required></div>
+            <div class="field full"><label for="habitNotes">Foco técnico</label><input id="habitNotes" maxlength="200" placeholder="Ex.: limpeza, relaxamento, regularidade"></div>
+          </div>
+          <div class="form-actions"><button class="btn" type="submit">Salvar exercício</button><button class="btn secondary" type="button" id="cancelHabit" hidden>Cancelar edição</button></div>
+        </form>
+      </div>
+      <div class="card section">
+        <h2>Registro diário</h2>
+        <p class="muted">Marca o dia em que praticaste. Clica novamente para desfazer uma marcação.</p>
+        <div id="habitList"></div>
+      </div>
+    </section>
+
+    <section id="page-sessions" hidden>
+      <div class="card">
+        <h2>Registrar sessão de estudo</h2>
+        <form id="sessionForm">
+          <div class="form-grid">
+            <div class="field"><label for="sessionDate">Data *</label><input id="sessionDate" type="date" required></div>
+            <div class="field"><label for="sessionMinutes">Duração em minutos *</label><input id="sessionMinutes" type="number" min="1" max="1440" required placeholder="Ex.: 30"></div>
+            <div class="field"><label for="sessionInstrument">Instrumento</label><select id="sessionInstrument"><option>Violão</option><option>Guitarra</option><option>Contrabaixo</option><option>Teoria musical</option><option>Outro</option></select></div>
+            <div class="field"><label for="sessionWork">Obra / exercício</label><input id="sessionWork" maxlength="120" placeholder="Ex.: La Linda"></div>
+            <div class="field full"><label for="sessionFocus">O que estudaste?</label><input id="sessionFocus" maxlength="200" placeholder="Ex.: passagem, técnica, interpretação"></div>
+            <div class="field full"><label for="sessionNotes">Como foi? O que melhorou ou precisa de atenção?</label><textarea id="sessionNotes" placeholder="Andamento, dificuldades, observações..."></textarea></div>
+          </div>
+          <button class="btn" type="submit">Salvar sessão</button>
+        </form>
+      </div>
+      <div class="card section">
+        <h2>Histórico de estudo</h2>
+        <div id="sessionHistory"></div>
+      </div>
+    </section>
+
+    <section id="page-library" hidden>
+      <div class="card">
+        <h2>Guardar referência</h2>
+        <form id="resourceForm">
+          <div class="form-grid">
+            <div class="field full"><label for="resourceName">Nome *</label><input id="resourceName" required maxlength="150" placeholder="Ex.: Interpretação de referência"></div>
+            <div class="field"><label for="resourceType">Tipo</label><select id="resourceType"><option>Gravação</option><option>Vídeo</option><option>Partitura</option><option>Tablatura</option><option>Artigo</option><option>Outro</option></select></div>
+            <div class="field"><label for="resourceWork">Obra / compositor</label><input id="resourceWork" maxlength="120" placeholder="Nome da obra"></div>
+            <div class="field full"><label for="resourceUrl">Link (opcional)</label><input id="resourceUrl" type="url" placeholder="https://..."></div>
+            <div class="field full"><label for="resourceNotes">Anotações</label><textarea id="resourceNotes"></textarea></div>
+          </div>
+          <button class="btn" type="submit">Guardar referência</button>
+        </form>
+      </div>
+      <div class="card section">
+        <h2>Meu acervo</h2>
+        <div id="resourceList" class="stack"></div>
+      </div>
+    </section>
+
+    <footer>INTERLÚDIO · Teu progresso se constrói sessão por sessão.</footer>
+  </main>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const KEY = "interludio-musical-v1";
+  const statuses = [
+    ["inbox","Caixa de entrada"],["todo","A fazer"],
+    ["doing","Em andamento"],["review","Em revisão"],["done","Concluído"]
+  ];
+  const $ = id => document.getElementById(id);
+  const today = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  };
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+  const escapeHTML = value => String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+  const safeUrl = value => {
+    try {
+      const u = new URL(value);
+      return ["http:","https:"].includes(u.protocol) ? u.href : "";
+    } catch { return ""; }
+  };
+  let data;
+  try {
+    data = JSON.parse(localStorage.getItem(KEY)) || {};
+  } catch { data = {}; }
+  data.tasks = Array.isArray(data.tasks) ? data.tasks : [];
+  data.habits = Array.isArray(data.habits) ? data.habits : [];
+  data.sessions = Array.isArray(data.sessions) ? data.sessions : [];
+  data.resources = Array.isArray(data.resources) ? data.resources : [];
+  data.marks = data.marks && typeof data.marks === "object" ? data.marks : {};
+
+  function persist() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(data));
+      return true;
+    } catch {
+      alert("Não foi possível salvar. O armazenamento do navegador pode estar cheio ou desativado. Exporta teus dados antes de continuar.");
+      return false;
+    }
+  }
+  function showPage(name) {
+    document.querySelectorAll("main section[id^=page-]").forEach(s => s.hidden = s.id !== "page-"+name);
+    document.querySelectorAll("[data-page]").forEach(b => b.classList.toggle("active",b.dataset.page===name));
+    const titles = {
+      home:["Visão geral","Um lugar para planejar, praticar e perceber tua evolução."],
+      tasks:["Kanban","Organiza as tarefas maiores e acompanha cada etapa."],
+      habits:["Hábitos","Constrói constância e registra os exercícios do cotidiano."],
+      sessions:["Sessões de estudo","Registra o que praticaste e o que aprendeste."],
+      library:["Acervo musical","Reúne links, partituras e referências num só lugar."]
+    };
+    $("pageTitle").textContent = titles[name][0];
+    $("pageSubtitle").textContent = titles[name][1];
+    render();
+  }
+  document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+  document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
+  $("todayLabel").textContent = new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"});
+  $("sessionDate").value = today();
+
+  function isMarked(habitId,date) {
+    return Array.isArray(data.marks[habitId]) && data.marks[habitId].includes(date);
+  }
+  function toggleMark(habitId,date) {
+    const arr = data.marks[habitId] || [];
+    data.marks[habitId] = arr.includes(date) ? arr.filter(d=>d!==date) : [...arr,date];
+    persist(); render();
+  }
+  function markDays(habitId, days) {
+    const result = [];
+    const d = new Date();
+    d.setHours(12,0,0,0);
+    d.setDate(d.getDate()-days+1);
+    for(let i=0;i<days;i++) {
+      result.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`);
+      d.setDate(d.getDate()+1);
+    }
+    return result;
+  }
+  function duration(min) {
+    const n = Number(min)||0;
+    return n >= 60 ? `${Math.floor(n/60)}h${n%60 ? " "+n%60+"min" : ""}` : `${n} min`;
+  }
+  function dateLabel(d) {
+    if(!d) return "Sem prazo";
+    const [y,m,day]=d.split("-").map(Number);
+    return new Date(y,m-1,day,12).toLocaleDateString("pt-BR");
+  }
+  function dueText(task) {
+    if(!task.due || task.status==="done") return task.due ? "Prazo: "+dateLabel(task.due) : "Sem prazo";
+    if(task.due < today()) return "Atrasada · "+dateLabel(task.due);
+    if(task.due === today()) return "Prazo hoje";
+    return "Prazo: "+dateLabel(task.due);
+  }
+  function taskCard(t) {
+    const options = statuses.map(([v,label])=>`<option value="${v}" ${t.status===v?"selected":""}>${label}</option>`).join("");
+    return `<article class="item">
+      <div class="item-top"><strong>${escapeHTML(t.name)}</strong><span class="tag">${escapeHTML(t.priority||"Normal")}</span></div>
+      <p>${escapeHTML(t.instrument||"")}${t.work?" · "+escapeHTML(t.work):""}</p>
+      <p>${escapeHTML(dueText(t))}</p>
+      ${t.notes?`<p>${escapeHTML(t.notes)}</p>`:""}
+      <div class="field" style="margin:9px 0 0"><label for="move-${escapeHTML(t.id)}">Mover para</label>
+        <select id="move-${escapeHTML(t.id)}" data-move="${escapeHTML(t.id)}">${options}</select></div>
+      <div class="actions"><button class="btn secondary small" data-edit-task="${escapeHTML(t.id)}">Editar</button>
+      <button class="btn danger small" data-delete-task="${escapeHTML(t.id)}">Excluir</button></div>
+    </article>`;
+  }
+  function habitCard(h) {
+    const dates=markDays(h.id,7);
+    const marked=dates.filter(d=>isMarked(h.id,d)).length;
+    const weekdays=["D","S","T","Q","Q","S","S"];
+    const days=dates.map(d=>{
+      const weekday=new Date(d+"T12:00:00").getDay();
+      return `<div class="day"><div>${weekdays[weekday]}</div><button type="button" class="${isMarked(h.id,d)?"done ":""}${d===today()?"today":""}" data-mark="${escapeHTML(h.id)}" data-date="${d}" aria-label="${escapeHTML(h.name)} em ${dateLabel(d)}" title="${dateLabel(d)}">${isMarked(h.id,d)?"✓":d.slice(-2)}</button></div>`;
+    }).join("");
+    return `<div class="habit-row"><div><strong>${escapeHTML(h.name)}</strong>
+      <p class="muted" style="font-size:12px;margin:3px 0">${escapeHTML(h.instrument)}${h.notes?" · "+escapeHTML(h.notes):""}</p>
+      <div class="progress"><span style="width:${Math.min(100,marked/Math.max(1,h.goal)*100)}%"></span></div>
+      <p class="muted" style="font-size:11px;margin:5px 0">${marked}/7 dias registrados · meta ${h.goal}/semana</p>
+      <div class="actions"><button class="btn secondary small" data-edit-habit="${escapeHTML(h.id)}">Editar</button><button class="btn danger small" data-delete-habit="${escapeHTML(h.id)}">Excluir</button></div>
+      </div><div class="week">${days}</div></div>`;
+  }
+  function sessionCard(s) {
+    return `<div class="history-row"><div><strong>${escapeHTML(s.work||s.focus||"Sessão de estudo")}</strong>
+      <p class="muted" style="font-size:12px;margin:4px 0">${dateLabel(s.date)} · ${escapeHTML(s.instrument)} · ${duration(s.minutes)}</p>
+      ${s.focus?`<p>${escapeHTML(s.focus)}</p>`:""}${s.notes?`<p>${escapeHTML(s.notes)}</p>`:""}</div>
+      <button class="btn danger small" data-delete-session="${escapeHTML(s.id)}">Excluir</button></div>`;
+  }
+  function renderHome() {
+    const open=data.tasks.filter(t=>t.status!=="done");
+    const todayMarks=data.habits.filter(h=>isMarked(h.id,today())).length;
+    const minutes=data.sessions.reduce((sum,s)=>sum+(Number(s.minutes)||0),0);
+    $("mTasks").textContent=open.length;
+    $("mHabits").textContent=`${todayMarks}/${data.habits.length}`;
+    $("mTime").textContent=duration(minutes);
+    $("mSessions").textContent=data.sessions.length;
+    $("homeTasks").innerHTML=open.length ? open.slice().sort((a,b)=>(a.due||"9999").localeCompare(b.due||"9999")).slice(0,5).map(t=>`<div class="item"><strong>${escapeHTML(t.name)}</strong><p>${escapeHTML(dueText(t))} · ${escapeHTML(statuses.find(s=>s[0]===t.status)?.[1]||"A fazer")}</p></div>`).join("") : '<div class="empty">Nenhuma tarefa pendente. Hora de planejar o próximo passo.</div>';
+    $("homeHabits").innerHTML=data.habits.length ? data.habits.map(h=>`<div class="history-row"><span>${escapeHTML(h.name)}</span><button class="btn ${isMarked(h.id,today())?"secondary":""} small" data-mark="${escapeHTML(h.id)}" data-date="${today()}">${isMarked(h.id,today())?"✓ Feito":"Marcar"}</button></div>`).join("") : '<div class="empty">Adiciona teus exercícios recorrentes para começar.</div>';
+    $("homeSessions").innerHTML=data.sessions.length ? data.sessions.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")).slice(0,3).map(sessionCard).join("") : '<div class="empty">Teu histórico começa quando registrares a primeira sessão.</div>';
+  }
+  function render() {
+    renderHome();
+    $("taskCount").textContent=data.tasks.length+" tarefas";
+    $("board").innerHTML=statuses.map(([key,label])=>{
+      const tasks=data.tasks.filter(t=>t.status===key);
+      return `<div class="column"><div class="column-head"><span>${label}</span><span class="muted">${tasks.length}</span></div>${tasks.length?tasks.map(taskCard).join(""):'<div class="empty">Nada por aqui.</div>'}</div>`;
+    }).join("");
+    $("habitList").innerHTML=data.habits.length ? data.habits.map(habitCard).join("") : '<div class="empty">Ainda não há exercícios. Cadastra o primeiro acima.</div>';
+    $("sessionHistory").innerHTML=data.sessions.length ? data.sessions.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")).map(sessionCard).join("") : '<div class="empty">Nenhuma sessão registrada.</div>';
+    $("resourceList").innerHTML=data.resources.length ? data.resources.slice().reverse().map(r=>{
+      const url=safeUrl(r.url);
+      return `<article class="item"><strong>${escapeHTML(r.name)}</strong><p>${escapeHTML(r.type)}${r.work?" · "+escapeHTML(r.work):""}</p>${r.notes?`<p>${escapeHTML(r.notes)}</p>`:""}${url?`<p><a class="link" href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">Abrir referência ↗</a></p>`:""}<div class="actions"><button class="btn danger small" data-delete-resource="${escapeHTML(r.id)}">Excluir</button></div></article>`;
+    }).join("") : '<div class="empty">Guarda aqui a primeira partitura, gravação ou referência.</div>';
+  }
+
+  $("taskForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    const id=$("taskId").value;
+    const old=data.tasks.find(t=>t.id===id);
+    const item={id:id||uid(),name:$("taskName").value.trim(),instrument:$("taskInstrument").value,priority:$("taskPriority").value,due:$("taskDue").value,work:$("taskWork").value.trim(),notes:$("taskNotes").value.trim(),status:$("taskStatus").value};
+    if(!item.name)return;
+    if(old)Object.assign(old,item);else data.tasks.push(item);
+    persist();resetTask();render();
+  });
+  function resetTask(){$("taskForm").reset();$("taskId").value="";$("taskFormTitle").textContent="Nova tarefa";$("cancelTask").hidden=true;$("taskStatus").value="inbox";}
+  $("cancelTask").addEventListener("click",resetTask);
+  $("habitForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    const id=$("habitId").value, old=data.habits.find(h=>h.id===id);
+    const item={id:id||uid(),name:$("habitName").value.trim(),instrument:$("habitInstrument").value,goal:Number($("habitGoal").value),notes:$("habitNotes").value.trim()};
+    if(!item.name)return;
+    if(old)Object.assign(old,item);else data.habits.push(item);
+    persist();resetHabit();render();
+  });
+  function resetHabit(){$("habitForm").reset();$("habitId").value="";$("habitGoal").value=5;$("habitFormTitle").textContent="Novo exercício recorrente";$("cancelHabit").hidden=true;}
+  $("cancelHabit").addEventListener("click",resetHabit);
+  $("sessionForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    data.sessions.push({id:uid(),date:$("sessionDate").value,minutes:Number($("sessionMinutes").value),instrument:$("sessionInstrument").value,work:$("sessionWork").value.trim(),focus:$("sessionFocus").value.trim(),notes:$("sessionNotes").value.trim()});
+    persist();$("sessionForm").reset();$("sessionDate").value=today();render();
+  });
+  $("resourceForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    const url=$("resourceUrl").value.trim();
+    if(url&&!safeUrl(url)){alert("Insere um link válido começando com https:// ou http://");return;}
+    data.resources.push({id:uid(),name:$("resourceName").value.trim(),type:$("resourceType").value,work:$("resourceWork").value.trim(),url,notes:$("resourceNotes").value.trim()});
+    persist();$("resourceForm").reset();render();
+  });
+  $("quickSession").addEventListener("click",()=>showPage("sessions"));
+
+  document.addEventListener("click",e=>{
+    const b=e.target.closest("button");
+    if(!b)return;
+    if(b.dataset.mark) {toggleMark(b.dataset.mark,b.dataset.date);return;}
+    if(b.dataset.editTask) {
+      const t=data.tasks.find(x=>x.id===b.dataset.editTask);if(!t)return;
+      $("taskId").value=t.id;$("taskName").value=t.name;$("taskInstrument").value=t.instrument;
+      $("taskPriority").value=t.priority;$("taskDue").value=t.due;$("taskWork").value=t.work;
+      $("taskNotes").value=t.notes;$("taskStatus").value=t.status;
+      $("taskFormTitle").textContent="Editar tarefa";$("cancelTask").hidden=false;
+      $("taskName").focus();window.scrollTo({top:0,behavior:"smooth"});return;
+    }
+    if(b.dataset.deleteTask && confirm("Excluir esta tarefa?")) {
+      data.tasks=data.tasks.filter(t=>t.id!==b.dataset.deleteTask);persist();render();return;
+    }
+    if(b.dataset.editHabit) {
+      const h=data.habits.find(x=>x.id===b.dataset.editHabit);if(!h)return;
+      $("habitId").value=h.id;$("habitName").value=h.name;$("habitInstrument").value=h.instrument;
+      $("habitGoal").value=h.goal;$("habitNotes").value=h.notes;
+      $("habitFormTitle").textContent="Editar exercício";$("cancelHabit").hidden=false;
+      $("habitName").focus();window.scrollTo({top:0,behavior:"smooth"});return;
+    }
+    if(b.dataset.deleteHabit && confirm("Excluir este exercício e seu histórico de marcações?")) {
+      data.habits=data.habits.filter(h=>h.id!==b.dataset.deleteHabit);delete data.marks[b.dataset.deleteHabit];persist();render();return;
+    }
+    if(b.dataset.deleteSession && confirm("Excluir este registro de estudo?")) {
+      data.sessions=data.sessions.filter(s=>s.id!==b.dataset.deleteSession);persist();render();return;
+    }
+    if(b.dataset.deleteResource && confirm("Excluir esta referência?")) {
+      data.resources=data.resources.filter(r=>r.id!==b.dataset.deleteResource);persist();render();
+    }
+  });
+  document.addEventListener("change",e=>{
+    if(e.target.matches("[data-move]")){
+      const t=data.tasks.find(x=>x.id===e.target.dataset.move);
+      if(t){t.status=e.target.value;persist();render();}
+    }
+  });
+
+  // Exportação para cópia de segurança.
+  const exportBtn=document.createElement("button");
+  exportBtn.className="btn secondary small";
+  exportBtn.textContent="Exportar backup";
+  exportBtn.style.marginTop="12px";
+  exportBtn.addEventListener("click",()=>{
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+    a.download="interludio-backup-"+today()+".json";a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  });
+  document.querySelector("footer").appendChild(document.createElement("br"));
+  document.querySelector("footer").appendChild(exportBtn);
+
+  render();
+})();
+</script>
+</body>
+</html>
